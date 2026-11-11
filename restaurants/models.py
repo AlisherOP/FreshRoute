@@ -60,11 +60,12 @@ class FoodProduct(models.Model):
     )
 
     category = models.ForeignKey(
-        FoodCategory,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="products"
+    FoodCategory,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+    related_name="products",
+    db_constraint=False
     )
 
     name = models.CharField(max_length=255)
@@ -74,11 +75,14 @@ class FoodProduct(models.Model):
 
     class Meta:
         db_table = "food_products"
-
         constraints = [
             models.CheckConstraint(
                 condition=models.Q(price__gte=0),
                 name="product_price_non_negative"
+            ),
+            models.UniqueConstraint(
+                fields=["product_id", "restaurant"],
+                name="unique_product_restaurant_pair"
             )
         ]
 
