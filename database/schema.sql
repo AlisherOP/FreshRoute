@@ -27,13 +27,16 @@ CREATE TABLE food_categories (
         REFERENCES restaurants(restaurant_id)
         ON DELETE CASCADE,
 
-    UNIQUE (restaurant_id, name)
+    UNIQUE (restaurant_id, name),
+    UNIQUE (category_id, restaurant_id)
+
 );
 
 
 
 CREATE TABLE food_products (
     product_id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+
     restaurant_id BIGINT NOT NULL,
     category_id BIGINT,
     name VARCHAR(255) NOT NULL,
@@ -43,11 +46,14 @@ CREATE TABLE food_products (
 
     FOREIGN KEY (restaurant_id)
         REFERENCES restaurants(restaurant_id)
-        ON DELETE CASCADE,
+        ON DELETE RESTRICT,
 
     FOREIGN KEY (category_id)
         REFERENCES food_categories(category_id)
-        ON DELETE SET NULL
+        ON DELETE SET NULL,
+       
+    UNIQUE (product_id, restaurant_id)
+
 );
 
 
