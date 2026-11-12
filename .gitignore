@@ -1,2 +1,39 @@
-.venv
-venv
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment variables and local secrets
+.env
+.env.*
+!.env.example
+!.env.template
+secrets/
+*.pem
+*.key
+
+# Django and local databases
+db.sqlite3
+db.sqlite3-journal
+/media/
+/staticfiles/
+
+# Logs, test output, and coverage
+*.log
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
