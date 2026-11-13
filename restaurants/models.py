@@ -157,7 +157,7 @@ class FoodProduct(models.Model):
         ]
 
     def clean(self):
-        if self.category_id and self.category.restaurant_id != self.restaurant_id:
+        if self.category_id and self.restaurant_id and self.category.restaurant_id != self.restaurant_id:
             raise ValidationError(
                 "Selected category does not belong to this restaurant.")
 
