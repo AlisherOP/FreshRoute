@@ -93,7 +93,7 @@ class Order(models.Model):
 
     order_id = models.BigAutoField(primary_key=True)
     customer = models.ForeignKey(
-        "customer.Customer",
+        "customers.Customer",
         on_delete=models.RESTRICT,
         related_name="orders",
     )
