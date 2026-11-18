@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Restaurant dashboard</title>
+</head>
+<body>
+  <main>
+    <h1>Your restaurant dashboard</h1>
+    <p>Signed in as {{ request.user.username }}.</p>
+
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit">Log out</button>
+    </form>
+
+    {% if restaurants %}
+      <h2>Your restaurants</h2>
+      {% for restaurant in restaurants %}
+        <section>
+          <h3>{{ restaurant.name }}</h3>
+          <p>{{ restaurant.address }}</p>
+          <p>Phone: {{ restaurant.phone }}</p>
+          <p>
+            Approval:
+            {% if restaurant.is_approved %}Approved{% else %}Waiting for approval{% endif %}
+          </p>
+          <p>
+            Restaurant status:
+            {% if restaurant.is_active %}Active{% else %}Inactive{% endif %}
+          </p>
+          <p><a href="{% url 'restaurants:menu_list' restaurant_id=restaurant.pk %}">Manage menu</a></p>
+        </section>
+      {% endfor %}
+    {% else %}
+      <p>No restaurants are assigned to this account yet.</p>
+    {% endif %}
+  </main>
+</body>
+</html>

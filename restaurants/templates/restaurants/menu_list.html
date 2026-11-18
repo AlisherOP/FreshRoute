@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ restaurant.name }} menu</title>
+</head>
+<body>
+  <main>
+    <p><a href="{% url 'restaurants:owner_dashboard' %}">Back to dashboard</a></p>
+    <h1>{{ restaurant.name }} menu</h1>
+    <p><a href="{% url 'restaurants:product_add' restaurant_id=restaurant.pk %}">Add a menu item</a></p>
+
+    {% if products %}
+      {% for product in products %}
+        <article>
+          {% if product.image %}
+            <p><img src="{{ product.image.url }}" alt="{{ product.name }}" width="180"></p>
+          {% endif %}
+          <h2>{{ product.name }}</h2>
+          {% if product.category %}<p>Category: {{ product.category.name }}</p>{% endif %}
+          <p>{{ product.description|default:"No description" }}</p>
+          <p>Price: {{ product.price }}</p>
+          {% if product.is_vegetarian %}<p>Vegetarian</p>{% endif %}
+          <p>Availability: {% if product.is_available %}Available{% else %}Unavailable{% endif %}</p>
+          <p><a href="{% url 'restaurants:product_edit' restaurant_id=restaurant.pk product_id=product.pk %}">Edit</a></p>
+          <form method="post" action="{% url 'restaurants:product_toggle_availability' restaurant_id=restaurant.pk product_id=product.pk %}">
+            {% csrf_token %}
+            <button type="submit">
+              {% if product.is_available %}Mark unavailable{% else %}Mark available{% endif %}
+            </button>
+          </form>
+        </article>
+        <hr>
+      {% endfor %}
+    {% else %}
+      <p>No menu items yet. Add the first item to get started.</p>
+    {% endif %}
+  </main>
+</body>
+</html>
