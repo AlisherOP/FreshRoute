@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page_title }} · {{ restaurant.name }}</title>
+</head>
+<body>
+  <main>
+    <p><a href="{% url 'restaurants:menu_list' restaurant_id=restaurant.pk %}">Back to menu</a></p>
+    <h1>{{ page_title }} for {{ restaurant.name }}</h1>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Save item</button>
+    </form>
+  </main>
+</body>
+</html>

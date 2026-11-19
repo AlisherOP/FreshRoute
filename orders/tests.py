@@ -1,12 +1,14 @@
-from datetime import timedelta
+from datetime import time, timedelta
 from decimal import Decimal
 from django.core.exceptions import ValidationError
+from django.core import mail
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
 from accounts.models import User
 from customers.models import Customer
 from orders.models import Coupon, Order, OrderItem, Review
-from restaurants.models import Restaurant, FoodProduct
+from restaurants.models import Restaurant, FoodProduct, OpeningHour
 
 
 class OrderModelTests(TestCase):
@@ -25,6 +27,13 @@ class OrderModelTests(TestCase):
             is_approved=True,
             is_active=True,
         )
+        for day_value, _ in OpeningHour.DayOfWeek.choices:
+            OpeningHour.objects.create(
+                restaurant=self.restaurant,
+                day_of_week=day_value,
+                open_time=time.min,
+                close_time=time.max,
+            )
         self.customer_user = User.objects.create_user(
             username="buyer",
             email="buyer@example.com",
@@ -106,3 +115,41 @@ class OrderModelTests(TestCase):
         )
         with self.assertRaises(ValidationError):
             review.clean()
+
+    def test_closed_restaurant_rejects_new_order(self):
+        self.restaurant.is_active = False
+        self.restaurant.save(update_fields=["is_active"])
+        with self.assertRaises(ValidationError):
+            Order.objects.create(
+                customer=self.customer,
+                restaurant=self.restaurant,
+                delivery_address="My Apartment",
+                payment_method=Order.PaymentMethod.COD,
+                subtotal=Decimal("10.00"),
+            )
+
+    def test_owner_status_change_sends_customer_email(self):
+        order = Order.objects.create(
+            customer=self.customer,
+            restaurant=self.restaurant,
+            delivery_address="My Apartment",
+            payment_method=Order.PaymentMethod.COD,
+            subtotal=Decimal("10.00"),
+        )
+        self.client.force_login(self.owner)
+        response = self.client.post(
+            reverse(
+                "orders:change_order_status",
+                kwargs={"restaurant_id": self.restaurant.pk, "order_id": order.pk},
+            ),
+            {"status": Order.Status.ACCEPTED},
+        )
+        order.refresh_from_db()
+        self.assertEqual(order.status, Order.Status.ACCEPTED)
+        self.assertRedirects(
+            response,
+            reverse("orders:incoming_orders", kwargs={"restaurant_id": self.restaurant.pk}),
+        )
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [self.customer_user.email])
+        self.assertIn("accepted", mail.outbox[0].body.lower())

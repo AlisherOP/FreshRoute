@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Opening hours · {{ restaurant.name }}</title>
+</head>
+<body>
+  <main>
+    <p><a href="{% url 'restaurants:owner_dashboard' %}">Back to dashboard</a></p>
+    <h1>Opening hours for {{ restaurant.name }}</h1>
+
+    {% if messages %}
+      <ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
+    {% endif %}
+
+    <p>For overnight hours, enter a closing time earlier than the opening time.</p>
+    <form method="post">
+      {% csrf_token %}
+      {% for day in form.day_rows %}
+        <fieldset>
+          <legend>{{ day.label }}</legend>
+          <p>
+            {{ day.is_closed }}
+            {{ day.is_closed.label_tag }}
+          </p>
+          <p>
+            {{ day.open_time.label_tag }}
+            {{ day.open_time }}
+            {{ day.open_time.errors }}
+          </p>
+          <p>
+            {{ day.close_time.label_tag }}
+            {{ day.close_time }}
+            {{ day.close_time.errors }}
+          </p>
+        </fieldset>
+      {% endfor %}
+      <button type="submit">Save opening hours</button>
+    </form>
+  </main>
+</body>
+</html>

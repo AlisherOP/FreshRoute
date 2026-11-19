@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Incoming orders · {{ restaurant.name }}</title>
+  <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.11/dist/htmx.min.js"
+          integrity="sha384-2OatzQy1H+Zd/IIrjr1TcuDGqLXeHhbooAyJY1KdQMKnr4LZ22k31GBLdYKHmVjg"
+          crossorigin="anonymous"></script>
+  <style>
+    .htmx-indicator { display: none; }
+    .htmx-request.htmx-indicator { display: block; }
+  </style>
+</head>
+<body>
+  <main>
+    <p><a href="{% url 'restaurants:owner_dashboard' %}">Back to dashboard</a></p>
+    <h1>Incoming orders for {{ restaurant.name }}</h1>
+    <p>This page refreshes the order list every five seconds.</p>
+    {% if messages %}
+      <ul>
+        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+    <p id="orders-refreshing" class="htmx-indicator" role="status">Checking for new orders…</p>
+
+    <div id="incoming-orders"
+         hx-get="{% url 'orders:incoming_orders' restaurant_id=restaurant.pk %}"
+         hx-trigger="every 5s"
+         hx-swap="innerHTML"
+         hx-indicator="#orders-refreshing">
+      {% include "orders/_incoming_order_list.html" %}
+    </div>
+  </main>
+</body>
+</html>

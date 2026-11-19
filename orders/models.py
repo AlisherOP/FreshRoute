@@ -183,6 +183,10 @@ class Order(models.Model):
         self.save(update_fields=update_fields)
 
     def clean(self):
+        if self._state.adding and self.restaurant_id and not self.restaurant.is_open_now():
+            raise ValidationError({
+                "restaurant": "This restaurant is closed and cannot accept orders right now."
+            })
         if self.coupon_id and self.restaurant_id and self.coupon.restaurant_id and self.coupon.restaurant_id != self.restaurant_id:
             raise ValidationError(
                 "This coupon is not valid for this restaurant.")
