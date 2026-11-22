@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Customer Profile &amp; Addresses</title>
+</head>
+
+<body>
+    <h1>Customer Profile</h1>
+    <p>User: {{ request.user.username }}</p>
+    <p>Phone: {{ customer.phone|default:"Not set yet" }}</p>
+
+    <h2>Saved Addresses</h2>
+    <ul>
+        {% for addr in addresses %}
+        <li>
+            <strong>{{ addr.label }}</strong> - {{ addr.street_address }}
+            {% if addr.zone %}({{ addr.zone }}){% endif %}
+            {% if addr.is_default %}<strong>[Default]</strong>{% endif %}
+        </li>
+        {% empty %}
+        <li>No saved addresses yet.</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Add Address</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Address</button>
+    </form>
+</body>
+
+</html>
