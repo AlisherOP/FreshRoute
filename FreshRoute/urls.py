@@ -18,14 +18,14 @@ urlpatterns = [
     # Django Administration
     path('admin/', admin.site.urls),
 
-    # Role-based Authentication
-    path('accounts/login/', accounts_views.RoleLoginView.as_view(), name='login'),
-    path('accounts/signup/', accounts_views.signup_view, name='signup'),
+    # Role-based Authentication & Accounts
+    path('accounts/', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
 
     # Domain Portals
     path('customers/', include('customers.urls')),
     path('restaurants/', include('restaurants.urls')),
+    path('delivery/', include('delivery.urls')),
     path('dashboard/', include('dashboard.urls', namespace='dashboard')),
     path('', include('orders.urls')),
 ]

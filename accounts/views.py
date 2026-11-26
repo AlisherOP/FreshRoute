@@ -9,12 +9,12 @@ from .forms import SignUpForm
 
 def _get_role_redirect_url(user):
     if user.is_staff or user.is_superuser:
-        return "/admin/"
+        return reverse("admin:index")
     role = getattr(user, "role", "")
     if role == "OWNER":
-        return "/restaurants/"
+        return reverse("restaurants:owner_dashboard")
     if role == "COURIER":
-        return "/delivery/"
+        return reverse("delivery:courier_dashboard")
     return reverse("customers:home")
 
 
@@ -23,6 +23,12 @@ class RoleLoginView(LoginView):
 
     def get_success_url(self):
         return _get_role_redirect_url(self.request.user)
+
+
+def home_redirect(request):
+    if not request.user.is_authenticated:
+        return redirect("login")
+    return redirect(_get_role_redirect_url(request.user))
 
 
 def signup_view(request):
