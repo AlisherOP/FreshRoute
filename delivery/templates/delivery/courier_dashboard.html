@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Courier dashboard · FreshRoute</title>
+</head>
+<body>
+  <main>
+    <h1>Courier dashboard</h1>
+    <p>Signed in as {{ request.user.username }}.</p>
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit">Log out</button>
+    </form>
+
+    <h2>Assigned orders</h2>
+    {% if orders %}
+      {% for order in orders %}
+        <article>
+          <h3>Order #{{ order.order_id }} — {{ order.get_status_display }}</h3>
+          <p>Restaurant: {{ order.restaurant.name }}</p>
+          <p>Delivery address: {{ order.delivery_address }}</p>
+          <ul>
+            {% for item in order.items.all %}
+              <li>{{ item.quantity }} × {{ item.product.name }}</li>
+            {% endfor %}
+          </ul>
+        </article>
+      {% endfor %}
+    {% else %}
+      <p>No active orders have been assigned to you.</p>
+    {% endif %}
+  </main>
+</body>
+</html>

@@ -7,11 +7,11 @@ from accounts import views as accounts_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/login/', accounts_views.RoleLoginView.as_view(), name='login'),
-    path('accounts/signup/', accounts_views.signup_view, name='signup'),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('', accounts_views.home_redirect, name='home'),
+    path('accounts/', include('accounts.urls')),
     path("customers/", include("customers.urls")),
     path('restaurants/', include('restaurants.urls')),
+    path('delivery/', include('delivery.urls')),
     path('', include('orders.urls')),
 ]
 
