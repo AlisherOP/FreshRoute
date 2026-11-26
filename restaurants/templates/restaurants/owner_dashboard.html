@@ -1,44 +1,576 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Restaurant owner dashboard</title>
+  <title>FreshRoute - Restaurant Owner Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --border-subtle: #f1f5f9;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-subtle: #94a3b8;
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --primary-light: #ecfdf5;
+      --amber: #f59e0b;
+      --amber-light: #fffbeb;
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --purple: #7c3aed;
+      --purple-light: #f5f3ff;
+      --red: #ef4444;
+      --red-light: #fef2f2;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+    /* Top Nav */
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+    }
+    .nav-inner {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      font-weight: 800;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(16, 185, 129, 0.25);
+    }
+    .brand-title {
+      font-weight: 800;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+    .brand-title span { color: var(--primary); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-link {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+    .nav-link:hover {
+      color: var(--text);
+      background: var(--border-subtle);
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      padding: 4px 12px;
+    }
+    .btn-logout {
+      background: none;
+      border: none;
+      color: var(--red);
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+      padding: 0 0 0 8px;
+      border-left: 1px solid var(--border);
+    }
+
+    /* Admin Banner */
+    .admin-banner {
+      background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+      border: 1px solid #ddd6fe;
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin: 24px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .admin-banner-text {
+      font-size: 13px;
+      color: #5b21b6;
+    }
+    .admin-banner-text strong {
+      font-weight: 800;
+      color: #4c1d95;
+    }
+
+    /* Page Header */
+    .page-header {
+      padding: 24px 0 20px 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .page-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Flash Messages */
+    .messages-list { margin-bottom: 20px; list-style: none; }
+    .message-item {
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      border: 1px solid var(--primary-border);
+    }
+
+    /* Owner Card Grid */
+    .owners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .owner-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .owner-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      border-color: #cbd5e1;
+    }
+    .owner-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .owner-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .owner-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .owner-venues-list {
+      margin: 14px 0;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .owner-venue-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Restaurant Card Grid */
+    .restaurants-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .restaurant-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    .restaurant-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+    .restaurant-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .restaurant-details {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 8px 0 16px 0;
+      line-height: 1.6;
+    }
+    .restaurant-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-approved { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+    .badge-pending { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .badge-open { background: #ecfdf5; color: #047857; }
+    .badge-closed { background: #f1f5f9; color: #64748b; }
+
+    /* Action Buttons */
+    .actions-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 8px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      transition: all 0.15s ease;
+    }
+    .btn-action:hover {
+      background: var(--bg);
+      border-color: #cbd5e1;
+    }
+    .btn-action.highlight {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1d4ed8;
+    }
+    .btn-action.highlight:hover { background: #dbeafe; }
+    .btn-action.kitchen {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #b91c1c;
+    }
+    .btn-action.kitchen:hover { background: #fee2e2; }
+
+    .btn-enter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: #7c3aed;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      transition: all 0.15s ease;
+      width: 100%;
+    }
+    .btn-enter:hover { background: #6d28d9; }
+
+    .empty-state {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+  </style>
 </head>
 <body>
-  <main>
-    <h1>Your restaurant dashboard</h1>
-    <p>Signed in as {{ request.user.username }}.</p>
 
+  <!-- Top Navigation -->
+  <header>
+    <div class="container nav-inner">
+      <a href="{% url 'home' %}" class="brand">
+        <div class="brand-logo">FR</div>
+        <div class="brand-title">Fresh<span>Route</span></div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="{% url 'home' %}" class="nav-link">Home</a>
+        <a href="{% url 'customers:home' %}" class="nav-link">Customer Hub</a>
+        <a href="{% url 'dashboard:ops_dashboard' %}" class="nav-link">Operations HQ</a>
+        <a href="/admin/" class="nav-link">Django Admin</a>
+      </nav>
+
+      <div class="user-pill">
+        <span>Logged in:</span>
+        <strong>{{ request.user.username }}</strong>
+        {% if is_admin %}
+        <span style="background: #ede9fe; color: #6b21a8; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 4px;">ADMIN</span>
+        {% else %}
+        <span style="background: #fef3c7; color: #92400e; font-weight: 800; font-size: 10px; padding: 2px 6px; border-radius: 4px;">OWNER</span>
+        {% endif %}
+        <form method="post" action="{% url 'logout' %}" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn-logout">Logout</button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Flash Messages -->
     {% if messages %}
-      <ul>
-        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+      <ul class="messages-list">
+        {% for message in messages %}
+          <li class="message-item">{{ message }}</li>
+        {% endfor %}
       </ul>
     {% endif %}
 
-    <form method="post" action="{% url 'logout' %}">
-      {% csrf_token %}
-      <button type="submit">Log out</button>
-    </form>
-
-    {% if restaurants %}
-      <h2>Your restaurants</h2>
-      {% for restaurant in restaurants %}
-        <section>
-          <h3>{{ restaurant.name }}</h3>
-          <p>{{ restaurant.address }}</p>
-          <p>Phone: {{ restaurant.phone }}</p>
-          <p>Approval: {% if restaurant.is_approved %}Approved{% else %}Waiting for approval{% endif %}</p>
-          <p>Restaurant: {% if restaurant.is_active %}Active{% else %}Inactive{% endif %}</p>
-          <p>Ordering: {% if restaurant.is_open_now %}Open now{% else %}Closed now{% endif %}</p>
-          <p><a href="{% url 'restaurants:menu_list' restaurant_id=restaurant.pk %}">Manage menu</a></p>
-          <p><a href="{% url 'restaurants:opening_hours' restaurant_id=restaurant.pk %}">Edit opening hours</a></p>
-          <p><a href="{% url 'orders:incoming_orders' restaurant_id=restaurant.pk %}">View incoming orders</a></p>
-        </section>
-      {% endfor %}
-    {% else %}
-      <p>No restaurants are assigned to this owner account yet.</p>
+    <!-- ADMIN MASTER IMPERSONATION BANNER -->
+    {% if is_admin %}
+      {% if selected_owner %}
+        <div class="admin-banner">
+          <div class="admin-banner-text">
+            👑 <strong>Admin Impersonation Mode:</strong> Currently viewing restaurant venues owned by
+            <strong>{{ selected_owner.get_full_name|default:selected_owner.username }}</strong> ({{ selected_owner.email }}).
+          </div>
+          <a href="{% url 'restaurants:owner_dashboard' %}" class="btn-action" style="background: #ffffff; border-color: #c4b5fd; color: #6d28d9;">
+            ← Exit To All Owners Directory
+          </a>
+        </div>
+      {% else %}
+        <div class="admin-banner">
+          <div class="admin-banner-text">
+            👑 <strong>Administrator Universal Access:</strong> You have master access to inspect, configure, and operate all restaurant kitchens across FreshRoute.
+          </div>
+          <span style="font-size: 11px; font-weight: 700; color: #6d28d9;">{{ all_owners|length }} Registered Owners Found</span>
+        </div>
+      {% endif %}
     {% endif %}
+
+    <!-- Page Title -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">
+          {% if is_admin and selected_owner %}
+            {{ selected_owner.get_full_name|default:selected_owner.username }}'s Kitchen Dashboard
+          {% elif is_admin %}
+            Restaurant Owners & Kitchens Directory
+          {% else %}
+            Your Restaurant Dashboard
+          {% endif %}
+        </h1>
+        <p class="page-subtitle">
+          {% if is_admin and selected_owner %}
+            Manage menus, configure opening hours, and monitor live incoming orders for this owner.
+          {% elif is_admin %}
+            Select any restaurant owner below to enter their individual management portal.
+          {% else %}
+            Manage your venues, menu items, opening hours, and incoming orders.
+          {% endif %}
+        </p>
+      </div>
+    </div>
+
+    <!-- VIEW 1: ADMIN SEES ALL OWNERS DIRECTORY -->
+    {% if is_admin and not selected_owner %}
+      <div class="owners-grid">
+        {% for owner in all_owners %}
+          <div class="owner-card">
+            <div>
+              <div class="owner-header">
+                <div>
+                  <div class="owner-name">{{ owner.get_full_name|default:owner.username }}</div>
+                  <div class="owner-meta">Username: <strong>@{{ owner.username }}</strong> • {{ owner.email }}</div>
+                </div>
+                <span class="badge" style="background: #f5f3ff; color: #6b21a8; border: 1px solid #ddd6fe;">
+                  {{ owner.owned_restaurants.count }} Venue{% if owner.owned_restaurants.count != 1 %}s{% endif %}
+                </span>
+              </div>
+
+              <!-- Owner's Venues Snippet -->
+              <div class="owner-venues-list">
+                {% for rest in owner.owned_restaurants.all %}
+                  <div class="owner-venue-item">
+                    <span><strong>{{ rest.name }}</strong> ({{ rest.address|truncatechars:25 }})</span>
+                    {% if rest.is_approved %}
+                      <span style="color: #047857; font-weight: 700; font-size: 10px;">Approved ✓</span>
+                    {% else %}
+                      <span style="color: #b45309; font-weight: 700; font-size: 10px;">Pending ⏳</span>
+                    {% endif %}
+                  </div>
+                {% empty %}
+                  <div style="font-size: 11px; color: var(--text-subtle); padding: 4px 0;">No venues created by this owner yet.</div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Enter Individually Button -->
+            <a href="?owner_id={{ owner.pk }}" class="btn-enter">
+              Enter As This Owner →
+            </a>
+          </div>
+        {% empty %}
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <p>No restaurant owner accounts found in the database.</p>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="page-header" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+        <h2 class="page-title" style="font-size: 18px;">All Platform Venues (Quick Operations)</h2>
+      </div>
+    {% endif %}
+
+    <!-- VIEW 2: RESTAURANT CARDS (Either selected owner's venues, or owner's own venues, or platform list) -->
+    <div class="restaurants-grid">
+      {% for restaurant in restaurants %}
+        <div class="restaurant-card">
+          <div>
+            <div class="restaurant-title">
+              <span>{{ restaurant.name }}</span>
+              {% if restaurant.is_open_now %}
+                <span class="badge badge-open">● Open Now</span>
+              {% else %}
+                <span class="badge badge-closed">Closed</span>
+              {% endif %}
+            </div>
+
+            <div class="restaurant-details">
+              <div>📍 {{ restaurant.address }}</div>
+              <div>📞 Phone: <strong>{{ restaurant.phone }}</strong></div>
+              {% if is_admin and not selected_owner %}
+                <div style="margin-top: 4px; color: var(--purple); font-weight: 600;">
+                  Owner: {{ restaurant.owner.get_full_name|default:restaurant.owner.username }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="restaurant-badges">
+              {% if restaurant.is_approved %}
+                <span class="badge badge-approved">Approved</span>
+              {% else %}
+                <span class="badge badge-pending">Waiting for Approval</span>
+              {% endif %}
+
+              {% if restaurant.is_active %}
+                <span class="badge" style="background: #f1f5f9; color: #334155;">Active</span>
+              {% else %}
+                <span class="badge" style="background: #fee2e2; color: #991b1b;">Suspended</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Deep Action Links (Admin can enter each directly!) -->
+          <div class="actions-row">
+            <a href="{% url 'restaurants:menu_list' restaurant_id=restaurant.pk %}" class="btn-action highlight">
+              Menu & Dishes
+            </a>
+            <a href="{% url 'restaurants:opening_hours' restaurant_id=restaurant.pk %}" class="btn-action">
+              Opening Hours
+            </a>
+            <a href="{% url 'orders:incoming_orders' restaurant_id=restaurant.pk %}" class="btn-action kitchen">
+              Kitchen (KDS)
+            </a>
+          </div>
+        </div>
+      {% empty %}
+        <div class="empty-state" style="grid-column: 1 / -1;">
+          <p>No restaurants found for this account.</p>
+        </div>
+      {% endfor %}
+    </div>
+
   </main>
+
 </body>
 </html>

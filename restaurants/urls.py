@@ -5,7 +5,8 @@ from . import views
 app_name = "restaurants"
 
 urlpatterns = [
-    path("dashboard/", views.owner_dashboard, name="owner_dashboard"),
+    path("", views.owner_dashboard, name="owner_dashboard"),
+    path("dashboard/", views.owner_dashboard, name="owner_dashboard_alias"),
     path("<int:restaurant_id>/menu/", views.menu_list, name="menu_list"),
     path("<int:restaurant_id>/menu/add/", views.product_add, name="product_add"),
     path(

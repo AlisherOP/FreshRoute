@@ -235,9 +235,17 @@
 
 <body>
     <header class="topbar">
-        <a class="brand" href="{% url 'customers:home' %}">FreshRoute</a>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <a class="brand" href="{% url 'home' %}">FreshRoute</a>
+            <a href="{% url 'home' %}" style="font-size: 13px; color: #64748b; text-decoration: none; font-weight: 600;">Home</a>
+            {% if is_admin %}
+            <a href="{% url 'restaurants:owner_dashboard' %}" style="font-size: 13px; color: #64748b; text-decoration: none; font-weight: 600;">Merchant Portal</a>
+            <a href="{% url 'dashboard:ops_dashboard' %}" style="font-size: 13px; color: #64748b; text-decoration: none; font-weight: 600;">Operations HQ</a>
+            <a href="/admin/" style="font-size: 13px; color: #64748b; text-decoration: none; font-weight: 600;">Admin</a>
+            {% endif %}
+        </div>
         <div class="topbar-right">
-            <span>{{ request.user.username }}</span>
+            <span>{{ request.user.username }} {% if is_admin %}<strong style="color: #7c3aed; font-size: 11px; background: #f5f3ff; padding: 2px 6px; border-radius: 4px;">ADMIN</strong>{% endif %}</span>
             <form class="logout-form" method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
                 <button type="submit" class="btn-outline">Log Out</button>
@@ -246,9 +254,27 @@
     </header>
 
     <main class="container">
+        {% if is_admin and all_customers %}
+        <div style="background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="font-size: 13px; color: #5b21b6;">
+                👑 <strong>Admin Access:</strong> Managing profile & address book for customer <strong>{{ customer.user.get_full_name|default:customer.user.username }}</strong> ({{ customer.user.email }}).
+            </div>
+            <form method="get" style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12px; color: #6d28d9; font-weight: 600;">Switch Customer:</span>
+                <select name="customer_id" onchange="this.form.submit()" style="padding: 4px 8px; font-size: 12px; border-radius: 6px; border: 1px solid #c4b5fd;">
+                    {% for c in all_customers %}
+                    <option value="{{ c.pk }}" {% if c.pk == customer.pk %}selected{% endif %}>
+                        {{ c.user.username }} ({{ c.user.get_full_name|default:"Customer" }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        {% endif %}
+
         <div class="page-header">
             <h1>Customer Profile</h1>
-            <p>Manage your contact details and saved delivery addresses.</p>
+            <p>Manage contact details and saved delivery addresses.</p>
         </div>
 
         <div class="grid">

@@ -32,11 +32,11 @@ OWNER_STATUS_ACTIONS = {
 
 @owner_required
 def incoming_orders(request, restaurant_id):
-    restaurant = get_object_or_404(
-        Restaurant,
-        pk=restaurant_id,
-        owner=request.user,
-    )
+    if request.user.is_staff or request.user.is_superuser:
+        restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
+    else:
+        restaurant = get_object_or_404(Restaurant, pk=restaurant_id, owner=request.user)
+
     orders = (
         Order.objects.filter(restaurant=restaurant)
         .exclude(status__in=[Order.Status.DELIVERED, Order.Status.CANCELLED])
@@ -62,11 +62,14 @@ def incoming_orders(request, restaurant_id):
 @owner_required
 @require_POST
 def change_order_status(request, restaurant_id, order_id):
-    restaurant = get_object_or_404(
-        Restaurant,
-        pk=restaurant_id,
-        owner=request.user,
-    )
+    if request.user.is_staff or request.user.is_superuser:
+        restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
+    else:
+        restaurant = get_object_or_404(
+            Restaurant,
+            pk=restaurant_id,
+            owner=request.user,
+        )
     order = get_object_or_404(
         Order,
         pk=order_id,

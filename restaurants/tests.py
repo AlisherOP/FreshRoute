@@ -175,3 +175,47 @@ class RestaurantOwnerViewTests(TestCase):
         self.assertFalse(monday.is_closed)
         self.assertEqual(monday.open_time.strftime("%H:%M"), "09:00")
         self.assertEqual(monday.close_time.strftime("%H:%M"), "18:00")
+
+    def test_admin_can_access_owner_dashboard_and_see_all_owners(self):
+        admin_user = User.objects.create_user(
+            username="super_admin",
+            email="admin@freshroute.com",
+            password="pass",
+            is_staff=True,
+            is_superuser=True,
+        )
+        self.client.force_login(admin_user)
+        response = self.client.get(reverse("restaurants:owner_dashboard"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Restaurant Owners & Kitchens Directory")
+        self.assertContains(response, self.owner.username)
+        self.assertContains(response, "Enter As This Owner")
+
+    def test_admin_can_enter_individual_owner_dashboard(self):
+        admin_user = User.objects.create_user(
+            username="super_admin_2",
+            email="admin2@freshroute.com",
+            password="pass",
+            is_staff=True,
+        )
+        self.client.force_login(admin_user)
+        response = self.client.get(
+            reverse("restaurants:owner_dashboard") + f"?owner_id={self.owner.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Admin Impersonation Mode")
+        self.assertContains(response, self.restaurant.name)
+
+    def test_admin_can_manage_any_restaurant_menu(self):
+        admin_user = User.objects.create_user(
+            username="super_admin_3",
+            email="admin3@freshroute.com",
+            password="pass",
+            is_staff=True,
+        )
+        self.client.force_login(admin_user)
+        response = self.client.get(
+            reverse("restaurants:menu_list", kwargs={"restaurant_id": self.restaurant.pk})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.restaurant.name)

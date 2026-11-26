@@ -3,12 +3,16 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
+from accounts.models import User
 from .decorators import owner_required
 from .forms import FoodProductForm, OpeningHoursForm
 from .models import FoodProduct, OpeningHour, Restaurant
 
 
 def owned_restaurant_or_404(request, restaurant_id):
+    # Admins can access and manage any restaurant
+    if request.user.is_staff or request.user.is_superuser:
+        return get_object_or_404(Restaurant, pk=restaurant_id)
     return get_object_or_404(
         Restaurant,
         pk=restaurant_id,
@@ -18,15 +22,48 @@ def owned_restaurant_or_404(request, restaurant_id):
 
 @owner_required
 def owner_dashboard(request):
-    restaurants = (
-        Restaurant.objects.filter(owner=request.user)
-        .prefetch_related("opening_hours")
-        .order_by("name")
-    )
+    is_admin = request.user.is_staff or request.user.is_superuser
+    selected_owner = None
+    all_owners = None
+
+    if is_admin:
+        owner_id = request.GET.get("owner_id")
+        if owner_id:
+            selected_owner = get_object_or_404(User, pk=owner_id)
+            restaurants = (
+                Restaurant.objects.filter(owner=selected_owner)
+                .prefetch_related("opening_hours")
+                .order_by("name")
+            )
+        else:
+            # Show all owners and their associated restaurants
+            all_owners = (
+                User.objects.filter(role=User.Role.OWNER)
+                .prefetch_related("owned_restaurants__opening_hours")
+                .order_by("username")
+            )
+            restaurants = (
+                Restaurant.objects.all()
+                .select_related("owner")
+                .prefetch_related("opening_hours")
+                .order_by("name")
+            )
+    else:
+        restaurants = (
+            Restaurant.objects.filter(owner=request.user)
+            .prefetch_related("opening_hours")
+            .order_by("name")
+        )
+
     return render(
         request,
         "restaurants/owner_dashboard.html",
-        {"restaurants": restaurants},
+        {
+            "restaurants": restaurants,
+            "is_admin": is_admin,
+            "selected_owner": selected_owner,
+            "all_owners": all_owners,
+        },
     )
 
 
