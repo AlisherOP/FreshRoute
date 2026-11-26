@@ -34,10 +34,9 @@ def profile_and_addresses(request):
             address = form.save(commit=False)
             address.customer = customer
             address.save()
-            redirect_url = "customers:home"
             if is_admin and target_customer_id:
                 return redirect(f"/customers/?customer_id={customer.pk}")
-            return redirect(redirect_url)
+            return redirect("customers:home")
     else:
         form = SavedAddressForm()
 
