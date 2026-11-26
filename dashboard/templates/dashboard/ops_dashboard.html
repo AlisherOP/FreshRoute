@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FreshRoute - Operations Control Center</title>
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* CSS Reset & Variables */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --border-subtle: #f1f5f9;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-subtle: #94a3b8;
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --primary-light: #ecfdf5;
+      --amber: #f59e0b;
+      --amber-light: #fffbeb;
+      --amber-dark: #b45309;
+      --blue: #3b82f6;
+      --blue-light: #eff6ff;
+      --purple: #8b5cf6;
+      --purple-light: #f5f3ff;
+      --red: #ef4444;
+      --red-light: #fef2f2;
+      --red-dark: #b91c1c;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Layout */
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+    /* Top Navigation */
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+    }
+    .nav-inner {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      font-weight: 800;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 4px rgba(16, 185, 129, 0.25);
+    }
+    .brand-title {
+      font-weight: 800;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .brand-title span { color: var(--primary); }
+    .badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 9999px;
+      background-color: var(--primary);
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      color: var(--text);
+      border: 1px solid var(--border);
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .btn-secondary:hover {
+      background: var(--bg);
+      border-color: #cbd5e1;
+    }
+    .user-pill {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--bg);
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+    }
+    .user-pill strong { color: var(--text); }
+
+    /* Flash Alerts */
+    .alerts { margin: 24px 0 0 0; }
+    .alert {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid transparent;
+    }
+    .alert-success { background: var(--primary-light); color: var(--primary-dark); border-color: rgba(16, 185, 129, 0.25); }
+    .alert-warning { background: var(--amber-light); color: var(--amber-dark); border-color: rgba(245, 158, 11, 0.25); }
+
+    /* Page Header */
+    .page-header {
+      padding: 28px 0 20px 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .page-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .kpi-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+      border-color: #cbd5e1;
+    }
+    .kpi-card.urgent {
+      border-color: #fca5a5;
+      background: linear-gradient(180deg, #fff 0%, #fff5f5 100%);
+    }
+    .kpi-card.warning {
+      border-color: #fde68a;
+      background: linear-gradient(180deg, #fff 0%, #fffdf5 100%);
+    }
+    .kpi-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+    .kpi-value {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin: 6px 0 2px 0;
+      font-feature-settings: "tnum";
+    }
+    .kpi-value.green { color: var(--primary-dark); }
+    .kpi-value.amber { color: var(--amber-dark); }
+    .kpi-value.red { color: var(--red-dark); }
+    .kpi-subtext {
+      font-size: 11px;
+      color: var(--text-subtle);
+      font-weight: 500;
+    }
+
+    /* Two-Column Grid for Queues */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 992px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+      .col-left, .col-right { grid-column: span 12 !important; }
+    }
+    .col-left { grid-column: span 6; display: flex; flex-direction: column; gap: 24px; }
+    .col-right { grid-column: span 6; display: flex; flex-direction: column; gap: 24px; }
+
+    /* Section Panels */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fafafa;
+    }
+    .panel-title {
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+    }
+    .panel-counter {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: #e2e8f0;
+      color: var(--text-muted);
+    }
+    .panel-body {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Queue Cards */
+    .item-card {
+      border: 1px solid var(--border);
+      background: #ffffff;
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      transition: all 0.15s ease;
+    }
+    .item-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: var(--shadow-sm);
+    }
+    .item-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .item-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .item-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .item-meta strong { color: var(--text); }
+    .item-time {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-subtle);
+      white-space: nowrap;
+    }
+
+    /* Pill Badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-pending { background: #fef3c7; color: #92400e; }
+    .badge-accepted { background: #dbeafe; color: #1e40af; }
+    .badge-preparing { background: #ede9fe; color: #5b21b6; }
+    .badge-ready { background: #cffafe; color: #155e75; }
+    .badge-delivery { background: #f3e8ff; color: #6b21a8; }
+    .badge-open { background: #fee2e2; color: #991b1b; }
+    .badge-progress { background: #fef3c7; color: #92400e; }
+
+    /* Quotes and Descriptions */
+    .quote-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 3px solid #3b82f6;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #334155;
+      font-style: italic;
+      margin: 8px 0;
+    }
+
+    /* Actions and Forms */
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+      margin-top: 10px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .btn-sm { padding: 5px 10px; font-size: 11px; }
+    .btn-approve {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-approve:hover { background: var(--primary-dark); box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3); }
+    .btn-reject {
+      background: #fff;
+      color: #ef4444;
+      border: 1px solid #fecaca;
+    }
+    .btn-reject:hover { background: #fef2f2; border-color: #f87171; }
+    .btn-action {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+    .btn-action:hover { background: #e2e8f0; color: #1e293b; }
+
+    /* Inputs */
+    .input-text {
+      width: 100%;
+      padding: 6px 10px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--text);
+      outline: none;
+      font-family: inherit;
+    }
+    .input-text:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); }
+    .select-dropdown {
+      padding: 6px 10px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #ffffff;
+      color: var(--text);
+      outline: none;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    /* Empty States */
+    .empty-state {
+      text-align: center;
+      padding: 36px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    .empty-state-title {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .empty-state-desc {
+      font-size: 12px;
+      color: var(--text-subtle);
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="container nav-inner">
+      <a href="{% url 'dashboard:ops_dashboard' %}" class="brand">
+        <div class="brand-logo">FR</div>
+        <div>
+          <div class="brand-title">Fresh<span>Route</span></div>
+        </div>
+      </a>
+
+      <div class="badge-live">
+        <span class="pulse-dot"></span> Operations Control HQ
+      </div>
+
+      <div class="nav-actions">
+        <a href="/admin/" class="btn-secondary">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+          Django Admin
+        </a>
+        <div class="user-pill">
+          <span>Staff:</span>
+          <strong>{{ request.user.username }}</strong>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Flash Notifications -->
+    {% if messages %}
+    <div class="alerts">
+      {% for message in messages %}
+      <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'warning' %}alert-warning{% endif %}">
+        <span>●</span>
+        <span>{{ message }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Page Title -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Platform Operations Radar</h1>
+        <p class="page-subtitle">Real-time merchant onboarding, customer support dispatch, and live delivery management.</p>
+      </div>
+      <a href="{% url 'dashboard:ops_dashboard' %}" class="btn-secondary">
+        ↻ Refresh Live Data
+      </a>
+    </div>
+
+    <!-- KPI Metric Cards Grid -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <span class="kpi-label">Today's Revenue</span>
+        <div class="kpi-value green font-mono">${{ today_revenue|floatformat:2 }}</div>
+        <span class="kpi-subtext">Gross order volume</span>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-label">Today's Orders</span>
+        <div class="kpi-value">{{ today_order_count }}</div>
+        <span class="kpi-subtext">Total checkouts today</span>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-label">Active In-Flight</span>
+        <div class="kpi-value" style="color: #2563eb;">{{ active_orders_count }}</div>
+        <span class="kpi-subtext">In kitchen or delivery</span>
+      </div>
+
+      <div class="kpi-card {% if pending_restaurants_count > 0 %}warning{% endif %}">
+        <span class="kpi-label">Pending Approval</span>
+        <div class="kpi-value {% if pending_restaurants_count > 0 %}amber{% endif %}">{{ pending_restaurants_count }}</div>
+        <span class="kpi-subtext">Merchants waiting</span>
+      </div>
+
+      <div class="kpi-card {% if open_complaints_count > 0 %}urgent{% endif %}">
+        <span class="kpi-label">Open Complaints</span>
+        <div class="kpi-value {% if open_complaints_count > 0 %}red{% endif %}">{{ open_complaints_count }}</div>
+        <span class="kpi-subtext">Support tickets</span>
+      </div>
+
+      <div class="kpi-card">
+        <span class="kpi-label">Couriers Online</span>
+        <div class="kpi-value" style="color: #7c3aed;">{{ available_couriers_count }}</div>
+        <span class="kpi-subtext">Available for dispatch</span>
+      </div>
+    </div>
+
+    <!-- Operational Queues -->
+    <div class="dashboard-grid">
+
+      <!-- LEFT COLUMN: Merchant Approvals & Complaints -->
+      <div class="col-left">
+
+        <!-- QUEUE 1: MERCHANT ONBOARDING -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span style="color: #f59e0b;">●</span> Merchant Onboarding Queue
+            </div>
+            <span class="panel-counter">{{ pending_restaurants|length }} Waiting</span>
+          </div>
+
+          <div class="panel-body">
+            {% for r in pending_restaurants %}
+            <div class="item-card">
+              <div class="item-card-header">
+                <div>
+                  <div class="item-title">{{ r.name }}</div>
+                  <div class="item-meta">Owner: <strong>{{ r.owner.get_full_name|default:r.owner.username }}</strong> ({{ r.owner.email }})</div>
+                  <div class="item-meta">Phone: <strong>{{ r.phone }}</strong> • Location: {{ r.address }}</div>
+                </div>
+                <span class="item-time">{{ r.created_at|timesince }} ago</span>
+              </div>
+
+              <div class="card-footer">
+                <span class="status-badge badge-pending">Pending Review</span>
+                <div style="display: flex; gap: 8px;">
+                  <form method="POST" action="{% url 'dashboard:approve_restaurant' r.restaurant_id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="reject">
+                    <button type="submit" class="btn btn-reject btn-sm">✕ Decline</button>
+                  </form>
+                  <form method="POST" action="{% url 'dashboard:approve_restaurant' r.restaurant_id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="approve">
+                    <button type="submit" class="btn btn-approve btn-sm">✓ Approve & Go Live</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+              <div class="empty-state-icon">🏪</div>
+              <div class="empty-state-title">No pending applications</div>
+              <div class="empty-state-desc">All restaurant onboarding requests are up to date.</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- QUEUE 2: CUSTOMER SUPPORT & COMPLAINTS -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span style="color: #ef4444;">●</span> Customer Support Triage
+            </div>
+            <span class="panel-counter">{{ unresolved_complaints|length }} Open</span>
+          </div>
+
+          <div class="panel-body">
+            {% for c in unresolved_complaints %}
+            <div class="item-card">
+              <div class="item-card-header">
+                <div>
+                  <div class="item-title">Ticket #CMP-{{ c.complaint_id }} on Order #{{ c.order.order_id }}</div>
+                  <div class="item-meta">Restaurant: <strong>{{ c.order.restaurant.name }}</strong> • Customer: <strong>{{ c.order.customer.user.username }}</strong></div>
+                </div>
+                <span class="status-badge {% if c.status == 'OPEN' %}badge-open{% else %}badge-progress{% endif %}">
+                  {{ c.get_status_display }}
+                </span>
+              </div>
+
+              <div class="quote-box">
+                "{{ c.description }}"
+              </div>
+
+              <!-- Quick Triage Form -->
+              <form method="POST" action="{% url 'dashboard:update_complaint' c.complaint_id %}" style="margin-top: 10px;">
+                {% csrf_token %}
+                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                  <input type="text" name="admin_notes" value="{{ c.admin_notes }}" placeholder="Add investigation note or voucher code..." class="input-text">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                  {% if c.status == 'OPEN' %}
+                  <button type="submit" name="status" value="IN_PROGRESS" class="btn btn-action btn-sm">Mark In Progress</button>
+                  {% endif %}
+                  <button type="submit" name="status" value="RESOLVED" class="btn btn-approve btn-sm">✓ Resolve Ticket</button>
+                </div>
+              </form>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+              <div class="empty-state-icon">🎉</div>
+              <div class="empty-state-title">Zero active complaints!</div>
+              <div class="empty-state-desc">Every customer issue has been resolved.</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: Active Dispatches Radar -->
+      <div class="col-right">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span style="color: #3b82f6;">●</span> Active Orders & Courier Dispatch Radar
+            </div>
+            <span class="panel-counter">{{ active_orders|length }} In-Flight</span>
+          </div>
+
+          <div class="panel-body">
+            {% for o in active_orders %}
+            <div class="item-card">
+              <div class="item-card-header">
+                <div>
+                  <div class="item-title">Order #{{ o.order_id }} • {{ o.restaurant.name }}</div>
+                  <div class="item-meta">Customer: <strong>{{ o.customer.user.username }}</strong> ({{ o.customer.phone }})</div>
+                  <div class="item-meta">Address: {{ o.delivery_address }}</div>
+                </div>
+                <div style="text-align: right;">
+                  <span class="status-badge
+                    {% if o.status == 'PENDING' %}badge-pending
+                    {% elif o.status == 'ACCEPTED' %}badge-accepted
+                    {% elif o.status == 'PREPARING' %}badge-preparing
+                    {% elif o.status == 'READY' %}badge-ready
+                    {% elif o.status == 'OUT_FOR_DELIVERY' %}badge-delivery
+                    {% endif %}">
+                    {{ o.get_status_display }}
+                  </span>
+                  <div style="font-weight: 800; font-size: 15px; color: #10b981; margin-top: 4px;">${{ o.total_amount }}</div>
+                </div>
+              </div>
+
+              <!-- Courier Assignment Row -->
+              <form method="POST" action="{% url 'dashboard:assign_courier' o.order_id %}" class="card-footer">
+                {% csrf_token %}
+                <div style="display: flex; align-items: center; gap: 8px; flex: 1;">
+                  <span style="font-size: 11px; font-weight: 600; color: var(--text-muted);">Assigned Courier:</span>
+                  <select name="courier_id" class="select-dropdown" style="flex: 1;">
+                    <option value="">-- No Courier Assigned --</option>
+                    {% for c in available_couriers %}
+                    <option value="{{ c.courier_id }}" {% if o.courier and o.courier.courier_id == c.courier_id %}selected{% endif %}>
+                      {{ c.user.get_full_name|default:c.user.username }} ({{ c.phone }})
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-action btn-sm">Assign</button>
+              </form>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+              <div class="empty-state-icon">🛵</div>
+              <div class="empty-state-title">No active orders right now</div>
+              <div class="empty-state-desc">Live orders will appear here as customers place checkouts.</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

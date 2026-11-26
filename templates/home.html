@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FreshRoute - Complete Food Delivery Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --border-subtle: #f1f5f9;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --text-subtle: #94a3b8;
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --primary-light: #ecfdf5;
+      --primary-border: #a7f3d0;
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --purple: #7c3aed;
+      --purple-light: #f5f3ff;
+      --amber: #f59e0b;
+      --amber-light: #fffbeb;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+
+    /* Top Navigation */
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+    }
+    .nav-inner {
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      font-weight: 800;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    }
+    .brand-title {
+      font-weight: 800;
+      font-size: 19px;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .brand-title span { color: var(--primary); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    @media (max-width: 860px) { .nav-links { display: none; } }
+    .nav-link {
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+    .nav-link:hover {
+      color: var(--text);
+      background: var(--border-subtle);
+    }
+
+    .auth-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 2px 4px rgba(16, 185, 129, 0.25);
+    }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-outline {
+      background: #ffffff;
+      color: var(--text);
+      border-color: var(--border);
+    }
+    .btn-outline:hover { background: var(--border-subtle); }
+
+    /* Hero Section */
+    .hero {
+      padding: 56px 0 40px 0;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: var(--primary-light);
+      border: 1px solid var(--primary-border);
+      border-radius: 9999px;
+      color: var(--primary-dark);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .hero-title {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: var(--text);
+      max-width: 780px;
+      margin: 0 auto 16px auto;
+    }
+    .hero-title span { color: var(--primary); }
+    .hero-subtitle {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 640px;
+      margin: 0 auto 28px auto;
+      line-height: 1.6;
+    }
+    .hero-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Section Headers */
+    .section-header {
+      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+    .section-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .section-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Gateway Grid (The 5 Portals) */
+    .gateway-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-bottom: 48px;
+    }
+    .gateway-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .gateway-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+      border-color: #cbd5e1;
+    }
+    .gateway-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+    .gateway-card.portal-customer::before { background: var(--blue); }
+    .gateway-card.portal-owner::before { background: var(--amber); }
+    .gateway-card.portal-kitchen::before { background: #ef4444; }
+    .gateway-card.portal-ops::before { background: var(--primary); }
+    .gateway-card.portal-admin::before { background: var(--purple); }
+
+    .gateway-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+    .gateway-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .gateway-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 16px;
+      flex-grow: 1;
+    }
+    .gateway-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      text-decoration: none;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .gateway-link:hover { text-decoration: underline; }
+
+    /* Showcase Grid (Restaurants) */
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+    .restaurant-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    .restaurant-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .restaurant-banner {
+      height: 100px;
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      padding: 14px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+    .restaurant-body {
+      padding: 16px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .restaurant-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .restaurant-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin: 6px 0 12px 0;
+      line-height: 1.5;
+    }
+    .restaurant-meta {
+      font-size: 11px;
+      color: var(--text-subtle);
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-open { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+    .badge-closed { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
+
+    /* Highlights Banner (Zones & Coupons) */
+    .highlights-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+    .highlight-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .highlight-box-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .zone-pill {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .coupon-pill {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: monospace;
+    }
+
+    /* Sandbox / Testing Credentials Bar */
+    .sandbox-bar {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 60px;
+      box-shadow: var(--shadow-sm);
+    }
+    .sandbox-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .sandbox-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .creds-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+    .cred-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+    .cred-role {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+    .cred-val {
+      font-family: monospace;
+      color: var(--text);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      background: #ffffff;
+      padding: 24px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="container nav-inner">
+      <a href="{% url 'home' %}" class="brand">
+        <div class="brand-logo">FR</div>
+        <div class="brand-title">Fresh<span>Route</span></div>
+      </a>
+
+      <!-- Functional Navigation Links -->
+      <nav class="nav-links">
+        <a href="{% url 'customers:home' %}" class="nav-link">Customer Hub</a>
+        <a href="{% url 'restaurants:owner_dashboard' %}" class="nav-link">Merchant Portal</a>
+        {% if owner_restaurant %}
+        <a href="{% url 'orders:incoming_orders' owner_restaurant.pk %}" class="nav-link">Kitchen (KDS)</a>
+        {% endif %}
+        <a href="{% url 'dashboard:ops_dashboard' %}" class="nav-link">Operations HQ</a>
+        <a href="/admin/" class="nav-link">Django Admin</a>
+      </nav>
+
+      <!-- User Auth State -->
+      <div class="auth-actions">
+        {% if request.user.is_authenticated %}
+        <div style="font-size: 12px; text-align: right;">
+          <div style="font-weight: 700; color: var(--text);">{{ request.user.get_full_name|default:request.user.username }}</div>
+          <div style="font-size: 10px; color: var(--primary); font-weight: 700; text-transform: uppercase;">{{ request.user.role|default:"Staff" }}</div>
+        </div>
+        <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline" style="padding: 6px 12px; font-size: 11px;">Log out</button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn btn-outline">Sign In</a>
+        <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-badge">
+        <span>⚡</span> Complete Multi-Role Food Logistics Engine
+      </div>
+      <h1 class="hero-title">
+        Order fresh food, run your kitchen, or <span>manage dispatches</span> in real time.
+      </h1>
+      <p class="hero-subtitle">
+        FreshRoute connects hungry customers, artisan restaurant kitchens, and dispatch teams in one seamless, high-speed platform.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="{% url 'customers:home' %}" class="btn btn-primary" style="padding: 10px 22px; font-size: 14px;">
+          🍔 Order as Customer
+        </a>
+        <a href="{% url 'restaurants:owner_dashboard' %}" class="btn btn-outline" style="padding: 10px 22px; font-size: 14px;">
+          🏪 Restaurant Owner Dashboard
+        </a>
+        <a href="{% url 'dashboard:ops_dashboard' %}" class="btn btn-outline" style="padding: 10px 22px; font-size: 14px; background: #faf5ff; border-color: #e9d5ff; color: #6b21a8;">
+          ⚡ Operations HQ
+        </a>
+      </div>
+    </section>
+
+    <!-- Role Gateways (The 5 Core Portals) -->
+    <section>
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Explore Platform Capabilities</h2>
+          <p class="section-desc">Every role has its own dedicated portal with tailored interfaces and real-time workflows.</p>
+        </div>
+      </div>
+
+      <div class="gateway-grid">
+
+        <!-- Portal 1: Customer -->
+        <div class="gateway-card portal-customer">
+          <div>
+            <div class="gateway-icon">👤</div>
+            <div class="gateway-name">Customer Portal</div>
+            <p class="gateway-desc">
+              Manage saved addresses (Home, Work, Dorm), automatically detect delivery zone fees, apply promo coupons, and place orders.
+            </p>
+          </div>
+          <a href="{% url 'customers:home' %}" class="gateway-link">
+            Open Customer Profile & Addresses →
+          </a>
+        </div>
+
+        <!-- Portal 2: Restaurant Owner -->
+        <div class="gateway-card portal-owner">
+          <div>
+            <div class="gateway-icon">🍳</div>
+            <div class="gateway-name">Merchant Dashboard</div>
+            <p class="gateway-desc">
+              Manage your venues, edit menus, upload product imagery with Pillow, toggle in-stock/sold-out status, and configure weekly opening hours.
+            </p>
+          </div>
+          <a href="{% url 'restaurants:owner_dashboard' %}" class="gateway-link">
+            Open Merchant Portal →
+          </a>
+        </div>
+
+        <!-- Portal 3: Kitchen Orders (KDS) -->
+        <div class="gateway-card portal-kitchen">
+          <div>
+            <div class="gateway-icon">📋</div>
+            <div class="gateway-name">Kitchen Orders (KDS)</div>
+            <p class="gateway-desc">
+              Incoming orders display with HTMX live polling. Advance tickets: PENDING → ACCEPTED → PREPARING → READY, triggering customer email alerts.
+            </p>
+          </div>
+          {% if owner_restaurant %}
+          <a href="{% url 'orders:incoming_orders' owner_restaurant.pk %}" class="gateway-link" style="color: #dc2626;">
+            Open Kitchen Orders Feed →
+          </a>
+          {% else %}
+          <span style="font-size: 11px; color: var(--text-subtle);">Login as owner to view KDS</span>
+          {% endif %}
+        </div>
+
+        <!-- Portal 4: Operations HQ -->
+        <div class="gateway-card portal-ops">
+          <div>
+            <div class="gateway-icon">⚡</div>
+            <div class="gateway-name">Operations HQ</div>
+            <p class="gateway-desc">
+              Live KPI metrics, 1-click restaurant onboarding approvals, customer support complaint triage, and active courier dispatch radar.
+            </p>
+          </div>
+          <a href="{% url 'dashboard:ops_dashboard' %}" class="gateway-link">
+            Open Operations Radar →
+          </a>
+        </div>
+
+        <!-- Portal 5: Django Admin -->
+        <div class="gateway-card portal-admin">
+          <div>
+            <div class="gateway-icon">⚙️</div>
+            <div class="gateway-name">Django Admin Back Office</div>
+            <p class="gateway-desc">
+              Supercharged data governance with color-coded status badges, readonly price and timestamp guardrails, and batch management actions.
+            </p>
+          </div>
+          <a href="/admin/" class="gateway-link" style="color: var(--purple);">
+            Open Django Admin →
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Approved Restaurants Showcase (Live Data from Database) -->
+    <section>
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Live Partner Restaurants</h2>
+          <p class="section-desc">Approved kitchens accepting orders on FreshRoute right now.</p>
+        </div>
+      </div>
+
+      <div class="showcase-grid">
+        {% for r in restaurants %}
+        <div class="restaurant-card">
+          <div class="restaurant-banner">
+            <span style="font-size: 26px;">🍽️</span>
+            {% if r.is_open_now %}
+            <span class="badge badge-open">● Open Now</span>
+            {% else %}
+            <span class="badge badge-closed">Closed</span>
+            {% endif %}
+          </div>
+          <div class="restaurant-body">
+            <div>
+              <div class="restaurant-name">{{ r.name }}</div>
+              <div class="restaurant-desc">{{ r.description|default:"Delicious freshly made dishes and drinks." }}</div>
+            </div>
+
+            <div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+                📍 {{ r.address }} • 📞 {{ r.phone }}
+              </div>
+              <div class="restaurant-meta">
+                <span>{{ r.products.count }} menu items</span>
+                <a href="{% url 'restaurants:menu_list' r.pk %}" class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;">
+                  View Menu
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; background: #fff; padding: 30px; border-radius: var(--radius); border: 1px solid var(--border); text-align: center; color: var(--text-muted);">
+          No approved restaurants live yet. Visit <a href="{% url 'dashboard:ops_dashboard' %}" style="color: var(--primary-dark); font-weight: 700;">Operations HQ</a> to approve pending partner applications!
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- Delivery Zones & Coupons Bar -->
+    <section class="highlights-row">
+      <!-- Zones -->
+      <div class="highlight-box">
+        <div class="highlight-box-title">
+          <span>📍</span> Supported Delivery Zones & Fees
+        </div>
+        <div class="pill-list">
+          {% for z in zones %}
+          <div class="zone-pill">{{ z.name }} (${{ z.fee }})</div>
+          {% empty %}
+          <span style="font-size: 12px; color: var(--text-subtle);">All standard city zones supported.</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Coupons -->
+      <div class="highlight-box">
+        <div class="highlight-box-title">
+          <span>🏷️</span> Active Promo Coupons
+        </div>
+        <div class="pill-list">
+          {% for c in coupons %}
+          <div class="coupon-pill">
+            {{ c.code }} ({{ c.discount_value }}{% if c.discount_type == 'PERCENT' %}%{% else %}${% endif %} OFF)
+          </div>
+          {% empty %}
+          <span style="font-size: 12px; color: var(--text-subtle);">Check back soon for new seasonal discounts!</span>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Developer & Testing Sandbox Credentials -->
+    <section class="sandbox-bar">
+      <div class="sandbox-header">
+        <div class="sandbox-title">
+          <span>🧪</span> Quick Test Accounts & Credentials
+        </div>
+        <span style="font-size: 11px; color: var(--text-muted);">Pre-seeded accounts for seamless evaluation</span>
+      </div>
+
+      <div class="creds-grid">
+        <div class="cred-card">
+          <div class="cred-role" style="color: var(--purple);">Platform Admin</div>
+          <div class="cred-val">maindev</div>
+          <div style="font-size: 11px; color: var(--text-subtle);">pass: 12341234</div>
+        </div>
+
+        <div class="cred-card">
+          <div class="cred-role" style="color: var(--amber);">Restaurant Owner</div>
+          <div class="cred-val">owner_marco</div>
+          <div style="font-size: 11px; color: var(--text-subtle);">pass: pass1234</div>
+        </div>
+
+        <div class="cred-card">
+          <div class="cred-role" style="color: #6b21a8;">Courier</div>
+          <div class="cred-val">courier_alex</div>
+          <div style="font-size: 11px; color: var(--text-subtle);">pass: pass1234</div>
+        </div>
+
+        <div class="cred-card">
+          <div class="cred-role" style="color: var(--blue);">Customer</div>
+          <div class="cred-val">customer_emily</div>
+          <div style="font-size: 11px; color: var(--text-subtle);">pass: pass1234</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      FreshRoute Food Delivery & Logistics Platform • Designed for Speed & Reliability
+    </div>
+  </footer>
+
+</body>
+</html>
