@@ -2,8 +2,7 @@ import logging
 
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.shortcuts import get_object_or_404, render
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from restaurants.decorators import owner_required
@@ -76,7 +75,8 @@ def change_order_status(request, restaurant_id, order_id):
     allowed_statuses = dict(OWNER_STATUS_ACTIONS.get(order.status, ()))
 
     if requested_status not in allowed_statuses:
-        messages.error(request, "That status change is not allowed for this order.")
+        messages.error(
+            request, "That status change is not allowed for this order.")
         return redirect("orders:incoming_orders", restaurant_id=restaurant.pk)
 
     try:
@@ -101,3 +101,7 @@ def change_order_status(request, restaurant_id, order_id):
             "The order was updated, but an email could not be sent to the customer.",
         )
     return redirect("orders:incoming_orders", restaurant_id=restaurant.pk)
+
+
+def home(request):
+    return render(request, "orders/index.html")

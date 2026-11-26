@@ -15,4 +15,9 @@ urlpatterns = [
         views.change_order_status,
         name="change_order_status",
     ),
+    path(
+        "",
+        views.home,
+        name="home",
+    ),
 ]
