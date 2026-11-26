@@ -3,12 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Restaurant dashboard</title>
+  <title>Restaurant owner dashboard</title>
 </head>
 <body>
   <main>
     <h1>Your restaurant dashboard</h1>
     <p>Signed in as {{ request.user.username }}.</p>
+
+    {% if messages %}
+      <ul>
+        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+      </ul>
+    {% endif %}
 
     <form method="post" action="{% url 'logout' %}">
       {% csrf_token %}
@@ -22,19 +28,16 @@
           <h3>{{ restaurant.name }}</h3>
           <p>{{ restaurant.address }}</p>
           <p>Phone: {{ restaurant.phone }}</p>
-          <p>
-            Approval:
-            {% if restaurant.is_approved %}Approved{% else %}Waiting for approval{% endif %}
-          </p>
-          <p>
-            Restaurant status:
-            {% if restaurant.is_active %}Active{% else %}Inactive{% endif %}
-          </p>
+          <p>Approval: {% if restaurant.is_approved %}Approved{% else %}Waiting for approval{% endif %}</p>
+          <p>Restaurant: {% if restaurant.is_active %}Active{% else %}Inactive{% endif %}</p>
+          <p>Ordering: {% if restaurant.is_open_now %}Open now{% else %}Closed now{% endif %}</p>
           <p><a href="{% url 'restaurants:menu_list' restaurant_id=restaurant.pk %}">Manage menu</a></p>
+          <p><a href="{% url 'restaurants:opening_hours' restaurant_id=restaurant.pk %}">Edit opening hours</a></p>
+          <p><a href="{% url 'orders:incoming_orders' restaurant_id=restaurant.pk %}">View incoming orders</a></p>
         </section>
       {% endfor %}
     {% else %}
-      <p>No restaurants are assigned to this account yet.</p>
+      <p>No restaurants are assigned to this owner account yet.</p>
     {% endif %}
   </main>
 </body>

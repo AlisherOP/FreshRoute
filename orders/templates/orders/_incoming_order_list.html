@@ -1,0 +1,38 @@
+{% if orders %}
+  <p>{{ orders|length }} active order{{ orders|length|pluralize }}.</p>
+  {% for order in orders %}
+    <article>
+      <h2>Order #{{ order.order_id }}</h2>
+      <p>Placed: {{ order.created_at|date:"M j, Y, P" }}</p>
+      <p>Customer: {{ order.customer.user.username }}</p>
+      <p>Status: {{ order.get_status_display }}</p>
+      <p>Delivery address: {{ order.delivery_address }}</p>
+      {% if order.notes %}<p>Customer notes: {{ order.notes }}</p>{% endif %}
+
+      <h3>Items</h3>
+      <ul>
+        {% for item in order.items.all %}
+          <li>{{ item.quantity }} × {{ item.product.name }} at {{ item.unit_price }} each</li>
+        {% endfor %}
+      </ul>
+
+      <p>Subtotal: {{ order.subtotal }}</p>
+      <p>Delivery fee: {{ order.delivery_fee }}</p>
+      <p>Total: {{ order.total_amount }}</p>
+
+      {% if order.owner_status_actions %}
+        <h3>Update order</h3>
+        {% for status_code, button_label in order.owner_status_actions %}
+          <form method="post" action="{% url 'orders:change_order_status' restaurant_id=restaurant.pk order_id=order.pk %}" style="display: inline-block; margin-right: .5rem;">
+            {% csrf_token %}
+            <input type="hidden" name="status" value="{{ status_code }}">
+            <button type="submit">{{ button_label }}</button>
+          </form>
+        {% endfor %}
+      {% endif %}
+    </article>
+    <hr>
+  {% endfor %}
+{% else %}
+  <p>No active orders right now.</p>
+{% endif %}

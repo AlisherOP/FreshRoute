@@ -11,6 +11,12 @@
     <h1>{{ restaurant.name }} menu</h1>
     <p><a href="{% url 'restaurants:product_add' restaurant_id=restaurant.pk %}">Add a menu item</a></p>
 
+    {% if messages %}
+      <ul>
+        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+
     {% if products %}
       {% for product in products %}
         <article>
@@ -23,12 +29,10 @@
           <p>Price: {{ product.price }}</p>
           {% if product.is_vegetarian %}<p>Vegetarian</p>{% endif %}
           <p>Availability: {% if product.is_available %}Available{% else %}Unavailable{% endif %}</p>
-          <p><a href="{% url 'restaurants:product_edit' restaurant_id=restaurant.pk product_id=product.pk %}">Edit</a></p>
+          <p><a href="{% url 'restaurants:product_edit' restaurant_id=restaurant.pk product_id=product.pk %}">Edit item</a></p>
           <form method="post" action="{% url 'restaurants:product_toggle_availability' restaurant_id=restaurant.pk product_id=product.pk %}">
             {% csrf_token %}
-            <button type="submit">
-              {% if product.is_available %}Mark unavailable{% else %}Mark available{% endif %}
-            </button>
+            <button type="submit">{% if product.is_available %}Mark unavailable{% else %}Mark available{% endif %}</button>
           </form>
         </article>
         <hr>
